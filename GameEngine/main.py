@@ -1,7 +1,7 @@
 
 import pygame
 from utils.road import draw_road
-from utils.lanes import spawn_traffic,move_traffic_cars
+from utils.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding
 
 pygame.init()
 
@@ -15,6 +15,24 @@ running = True
 tick_count = 0
 
 traffic_cars = spawn_traffic()
+
+player_car = create_car(lane2,"green",is_player=True)
+
+speed = 20
+
+def move_player_car(player,keys):
+
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        player.x -= speed
+
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        player.x += speed
+
+    if keys[pygame.K_UP] or keys[pygame.K_w]:
+        player.y -= speed
+
+    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        player.y += speed
 
 while running:
     # Events
@@ -34,8 +52,17 @@ while running:
     move_traffic_cars(traffic_cars)
 
     for traffic_car in traffic_cars:
-        pygame.draw.rect(screen,"blue",traffic_car)
+        pygame.draw.rect(screen,traffic_car.car_color,traffic_car.car_rect)
     # Draw
+    pygame.draw.rect(screen,player_car.car_color,player_car.car_rect)
+    
+    keys = pygame.key.get_pressed()
+    move_player_car(player_car.car_rect,keys)
+    
+    if is_colliding(player_car,traffic_cars):
+        print("cars collided")
+        break
+    
     # player.draw(screen)
 
     pygame.display.flip()
