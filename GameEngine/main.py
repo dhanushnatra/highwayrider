@@ -1,7 +1,7 @@
 
 import pygame
 from utils.road import draw_road
-from utils.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding
+from utils.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,get_player_lane
 
 pygame.init()
 
@@ -14,7 +14,9 @@ running = True
 
 tick_count = 0
 
-traffic_cars = spawn_traffic()
+traffic = spawn_traffic()
+traffic_cars = traffic[0]
+print("empty lane =",traffic[1])
 
 player_car = create_car(lane2,"green",is_player=True)
 
@@ -44,7 +46,8 @@ while running:
     # player.update()
     
     if tick_count%60==0 and tick_count!=0:
-        traffic_cars += spawn_traffic()
+        traffic_cars += spawn_traffic()[0]
+        print(get_player_lane(player_car.car_rect))
     
     screen.fill("#313131")
     draw_road(screen)
