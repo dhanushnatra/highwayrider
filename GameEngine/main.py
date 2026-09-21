@@ -22,7 +22,7 @@ player_car = create_car(lane2,"green",is_player=True)
 
 speed = 20
 
-def move_player_car(player,keys):
+def move_player_car(player:pygame.Rect,keys):
 
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
         player.x -= speed

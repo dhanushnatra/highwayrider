@@ -18,7 +18,7 @@ def create_car(lane,color,is_player=False)->Car:
 
 
 def get_empty_lane(lanes:list[int])->int:
-    return set([1,2,3]).difference(set(lanes))
+    return int(list(set([1,2,3]).difference(set(lanes)))[0])
 
 def spawn_traffic()->tuple[list[Car],int]:
     traffic_cars = []
@@ -58,12 +58,13 @@ def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
 
 
 def get_player_lane(player_rect:Rect)->int:
-    player_y = player_rect.x
-    print(player_y)
-    if player_y > lane1:
-        if player_y < lane2:
+    player_x = player_rect.x
+    print(player_x)
+    if player_x < lane1:
+        return 1
+    else:
+        if player_x < lane2:
             return 2
         else:
             return 3
-    else:
-        return 1
+    
