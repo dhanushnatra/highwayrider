@@ -45,9 +45,14 @@ while running:
     # Update
     # player.update()
     
-    if tick_count%60==0 and tick_count!=0:
-        traffic_cars += spawn_traffic()[0]
-        print(get_player_lane(player_car.car_rect))
+    
+    if tick_count!=0:
+        if tick_count==30:
+            print("send to model")
+        if tick_count==60:
+            tick_count=0
+            traffic_cars += spawn_traffic()[0]
+            print(get_player_lane(player_car.car_rect))
     
     screen.fill("#313131")
     draw_road(screen)
