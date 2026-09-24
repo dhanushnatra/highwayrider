@@ -36,6 +36,7 @@ def move_player_car(player:pygame.Rect,keys):
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
         player.y += speed
 
+
 while running:
     # Events
     for event in pygame.event.get():
@@ -47,13 +48,15 @@ while running:
     
     
     if tick_count!=0:
-        if tick_count==30:
-            print("send to model")
+        # if tick_count==30:
+        #     print("send to model")
         if tick_count==60:
             tick_count=0
             traffic_cars += spawn_traffic()[0]
             print(get_player_lane(player_car.car_rect))
-    
+            print("len of traffic cars",len(traffic_cars))
+
+
     screen.fill("#313131")
     draw_road(screen)
     

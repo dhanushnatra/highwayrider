@@ -47,6 +47,8 @@ def spawn_traffic()->tuple[list[Car],int]:
 
 def move_traffic_cars(traffic_cars:list[Car]):
     for traffic_car in traffic_cars:
+        if traffic_car.car_rect.y > 1030:
+            traffic_cars.remove(traffic_car)
         traffic_car.car_rect.y+=10
 
 
