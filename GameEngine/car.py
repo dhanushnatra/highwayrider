@@ -28,8 +28,6 @@ def spawn_traffic()->tuple[list[Car],int]:
             case 3:
                 traffic_car = create_car(lane3,"blue")
         traffic_cars.append(traffic_car)
-    
-    print(lanes)    
     return traffic_cars,get_empty_lane(lanes)
 
 
@@ -50,11 +48,10 @@ def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
 
 def get_player_lane(player_rect:Rect)->int:
     player_x = player_rect.x
-    print(player_x)
-    if player_x < lane1:
+    if player_x < 220:
         return 1
     else:
-        if player_x < lane2:
+        if player_x < 420:
             return 2
         else:
             return 3

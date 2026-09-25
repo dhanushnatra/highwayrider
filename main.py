@@ -3,7 +3,7 @@ import pygame
 from GameEngine.road import draw_road
 from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,get_player_lane
 from torch import Tensor
-from GameEngine.preprocessing import init_traffic_array,get_traffic_difference
+from GameEngine.preprocessing import preprocess
 
 
 pygame.init()
@@ -16,12 +16,14 @@ running = True
 
 
 tick_count = 0
+player_car = create_car(lane2,"green",is_player=True)
 
 traffic = spawn_traffic()
 traffic_cars = traffic[0]
-print("empty lane =",traffic[1])
+empty_lane = traffic[1]
+print("empty lane =",empty_lane)
+print("player lane = ",get_player_lane(player_car.car_rect))
 
-player_car = create_car(lane2,"green",is_player=True)
 
 speed = 20
 
@@ -39,8 +41,6 @@ def move_player_car(player:pygame.Rect,keys):
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
         player.y += speed
 
-previous_traffic:Tensor = None
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,17 +49,18 @@ while running:
     
     if tick_count!=0:
         
+        if tick_count==30:
+            empty_lane = traffic[1]
+            print("empty lane =",empty_lane)
+            print("player lane = ",get_player_lane(player_car.car_rect))
+        
         if tick_count==60:
             tick_count=0
-            traffic_cars += spawn_traffic()[0]
-            print(get_player_lane(player_car.car_rect))
-            print("len of traffic cars",len(traffic_cars))
-        if  previous_traffic is None:
-            previous_traffic = init_traffic_array(traffic_cars,player_car)
-        else:
-            present_traffic = init_traffic_array(traffic_cars,player_car)
-            print(get_traffic_difference(previous_traffic,present_traffic).size())
-            previous_traffic = present_traffic
+            traffic = spawn_traffic()
+            traffic_cars+=traffic[0]
+            
+    print(preprocess(traffic_cars,player_car).size())
+            
             
 
     screen.fill("#313131")
