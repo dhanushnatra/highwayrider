@@ -3,13 +3,24 @@ from random import randint
 from GameEngine.models import Car,lane1,lane2,lane3
 
 def create_car(lane,color,is_player=False)->Car:
-    return Car(Rect(lane,850 if is_player else 0,100,150),color)
+    return Car(Rect(lane,850 if is_player else 0,120,150),color)
+
+all_lanes = set([1,2,3])
 
 
-def get_empty_lane(lanes:list[int])->int:
-    return int(list(set([1,2,3]).difference(set(lanes)))[0])
 
-def spawn_traffic()->tuple[list[Car],int]:
+def get_empty_lane(traffic_cars:list[Car])->int:
+    full_lanes = set()
+    
+    for traffic_car in traffic_cars:
+        if traffic_car.car_rect.y > 400:
+            full_lanes.add(get_player_lane(traffic_car.car_rect))
+            
+    empty_lanes = all_lanes.difference(full_lanes)
+    
+    return list(empty_lanes)[0] if len(empty_lanes)==1 else 2
+
+def spawn_traffic()->list[Car]:
     traffic_cars = []
     lanes = [randint(1,3)]
     
@@ -28,7 +39,7 @@ def spawn_traffic()->tuple[list[Car],int]:
             case 3:
                 traffic_car = create_car(lane3,"blue")
         traffic_cars.append(traffic_car)
-    return traffic_cars,get_empty_lane(lanes)
+    return traffic_cars
 
 
 
@@ -36,7 +47,10 @@ def move_traffic_cars(traffic_cars:list[Car]):
     for traffic_car in traffic_cars:
         if traffic_car.car_rect.y > 1010:
             traffic_cars.remove(traffic_car)
+        if traffic_car.car_rect.y > 400:
+            traffic_car.car_color = "yellow"
         traffic_car.car_rect.y+=10
+        
 
 
 def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
@@ -56,17 +70,18 @@ def get_player_lane(player_rect:Rect)->int:
         else:
             return 3
 
+speed = 30
 
 def move_player_car_by_y(Y:int,player_car:Car):
     match Y:
         case 0:
-            if player_car.car_rect.x <89:
+            if player_car.car_rect.x <80:
                 return
-            player_car.car_rect.x -= 20
+            player_car.car_rect.x -= speed
         case 1:
             pass
         case 2:
             if player_car.car_rect.x > 450:
                 return
-            player_car.car_rect.x +=20
+            player_car.car_rect.x +=speed
             

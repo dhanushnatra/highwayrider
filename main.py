@@ -1,7 +1,7 @@
 
 import pygame
-from GameEngine.road import draw_road
-from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,move_player_car_by_y,get_player_lane
+from GameEngine.road import draw_road,draw_threshold
+from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,move_player_car_by_y,get_player_lane,get_empty_lane
 from torch import Tensor
 from GameEngine.preprocessing import preprocess,get_y
 from model_setup import convert_to_int,save_model,load_model
@@ -22,13 +22,10 @@ running = True
 tick_count = 0
 player_car = create_car(lane2,"green",is_player=True)
 
-traffic = spawn_traffic()
-traffic_cars = traffic[0]
-empty_lane = traffic[1]
-actual_y = get_y(get_player_lane(player_car.car_rect),empty_lane)
-print("empty lane =",empty_lane)
-print("player lane = ",get_player_lane(player_car.car_rect))
-learning_rate:float = 0.01
+traffic_cars = spawn_traffic()
+learning_rate:float = 0.001
+
+mistakes = 0
 
 # speed = 20
 
@@ -56,19 +53,18 @@ try:
         
         if tick_count!=0:
             
-            if tick_count==36:
-                empty_lane = traffic[1]
-                actual_y = get_y(get_player_lane(player_car.car_rect),empty_lane)
-                print("empty lane =",empty_lane)
-                print("player lane = ",get_player_lane(player_car.car_rect))
-            
             if tick_count==60:
                 tick_count=0
-                traffic = spawn_traffic()
-                traffic_cars+=traffic[0]
-        
+                traffic_cars += spawn_traffic()
         
         x = preprocess(traffic_cars,player_car)
+        
+        player_lane = get_player_lane(player_car.car_rect)
+        empty_lane = get_empty_lane(traffic_cars)
+        # print("player lane=",player_lane)
+        # print("empty lane=",empty_lane)
+        
+        actual_y = get_y(player_lane,empty_lane)
         
         w1,b1,w2,b2,w3,b3,y_hat = model_loop(w1,b1,w2,b2,w3,b3,x,actual_y,learning_rate)
         
@@ -76,6 +72,7 @@ try:
 
         screen.fill("#313131")
         draw_road(screen)
+        draw_threshold(screen)
         
         move_traffic_cars(traffic_cars)
 
@@ -96,10 +93,19 @@ try:
         if is_colliding(player_car,traffic_cars):
             player_car.car_rect.y = 850
             traffic_cars = []
-            del traffic
             tick_count=0
-            traffic = spawn_traffic()
-            traffic_cars+=traffic[0]
+            traffic_cars += spawn_traffic()
+            mistakes+=1
+            player_lane = get_player_lane(player_car.car_rect)
+            empty_lane = get_empty_lane(traffic_cars)
+            print("player lane=",player_lane)
+            print("empty lane=",empty_lane)
+            
+            actual_y = get_y(player_lane,empty_lane)
+            
+            w1,b1,w2,b2,w3,b3,y_hat = model_loop(w1,b1,w2,b2,w3,b3,x,actual_y,learning_rate)
+            
+            move_player_car_by_y(convert_to_int(y_hat),player_car)
             
         
         
@@ -111,3 +117,4 @@ try:
 
 except KeyboardInterrupt:
     save_model(w1,b1,w2,b2,w3,b3)
+    print("total mistakes made =",mistakes)

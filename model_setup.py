@@ -22,7 +22,6 @@ def convert_to_int(y_hat:Tensor)->int:
 
 def predict(w1,b1,w2,b2,w3,b3,x)->int:
     y_hat = torch.argmax(forward_prop(w1,b1,w2,b2,w3,b3,x)[0])
-    print(y_hat)
     return int(y_hat)
 
 def save_model(w1,b1,w2,b2,w3,b3):
@@ -42,7 +41,7 @@ def save_model(w1,b1,w2,b2,w3,b3):
 def load_model():
     if os.path.exists(model_path):
         model_weights:ModelWeights = joblib.load(model_path)
-        print(model_weights)
+        
         return model_weights['w1'],model_weights['b1'],model_weights['w2'],model_weights['b2'],model_weights['w3'],model_weights['b3']
     else:
         print("weights init")
