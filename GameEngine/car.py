@@ -66,7 +66,7 @@ def move_player_car_by_y(Y:int,player_car:Car):
         case 1:
             pass
         case 2:
-            if player_car.car_rect.x > 700:
+            if player_car.car_rect.x > 450:
                 return
             player_car.car_rect.x +=20
             
