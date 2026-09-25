@@ -1,7 +1,10 @@
 
 import pygame
-from utils.road import draw_road
-from utils.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,get_player_lane
+from GameEngine.road import draw_road
+from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,get_player_lane
+from torch import Tensor
+from GameEngine.preprocessing import init_traffic_array,get_traffic_difference
+
 
 pygame.init()
 
@@ -36,26 +39,28 @@ def move_player_car(player:pygame.Rect,keys):
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
         player.y += speed
 
+previous_traffic:Tensor = None
 
 while running:
-    # Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    # Update
-    # player.update()
     
     
     if tick_count!=0:
-        # if tick_count==30:
-        #     print("send to model")
+        
         if tick_count==60:
             tick_count=0
             traffic_cars += spawn_traffic()[0]
             print(get_player_lane(player_car.car_rect))
             print("len of traffic cars",len(traffic_cars))
-
+        if  previous_traffic is None:
+            previous_traffic = init_traffic_array(traffic_cars,player_car)
+        else:
+            present_traffic = init_traffic_array(traffic_cars,player_car)
+            print(get_traffic_difference(previous_traffic,present_traffic).size())
+            previous_traffic = present_traffic
+            
 
     screen.fill("#313131")
     draw_road(screen)
@@ -64,7 +69,8 @@ while running:
 
     for traffic_car in traffic_cars:
         pygame.draw.rect(screen,traffic_car.car_color,traffic_car.car_rect)
-    # Draw
+    
+    
     pygame.draw.rect(screen,player_car.car_color,player_car.car_rect)
     
     keys = pygame.key.get_pressed()
@@ -74,8 +80,7 @@ while running:
         print("cars collided")
         break
     
-    # player.draw(screen)
-
+    
     pygame.display.flip()
     clock.tick(20)
     tick_count+=1

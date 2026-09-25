@@ -1,17 +1,6 @@
-from pygame import Rect,key
+from pygame import Rect
 from random import randint
-
-lane1 = 90
-lane2 = 280 
-lane3 = 460
-
-class Car:
-    car_rect:Rect
-    car_color:str
-    
-    def __init__(self,car_rect,car_color):
-        self.car_rect = car_rect
-        self.car_color = car_color
+from GameEngine.models import Car,lane1,lane2,lane3
 
 def create_car(lane,color,is_player=False)->Car:
     return Car(Rect(lane,850 if is_player else 0,100,150),color)
@@ -47,7 +36,7 @@ def spawn_traffic()->tuple[list[Car],int]:
 
 def move_traffic_cars(traffic_cars:list[Car]):
     for traffic_car in traffic_cars:
-        if traffic_car.car_rect.y > 1030:
+        if traffic_car.car_rect.y > 1010:
             traffic_cars.remove(traffic_car)
         traffic_car.car_rect.y+=10
 
