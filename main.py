@@ -1,9 +1,10 @@
 
 import pygame
 from GameEngine.road import draw_road
-from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,get_player_lane
+from GameEngine.car import spawn_traffic,move_traffic_cars,create_car,lane2,is_colliding,move_player_car_by_y,get_player_lane
 from torch import Tensor
 from GameEngine.preprocessing import preprocess
+from model_setup import predict
 
 
 pygame.init()
@@ -58,9 +59,9 @@ while running:
             tick_count=0
             traffic = spawn_traffic()
             traffic_cars+=traffic[0]
-            
-    print(preprocess(traffic_cars,player_car).size())
-            
+    
+    move_player_car_by_y(predict(preprocess(traffic_cars,player_car)),player_car)
+    
             
 
     screen.fill("#313131")

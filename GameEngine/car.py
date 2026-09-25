@@ -55,4 +55,18 @@ def get_player_lane(player_rect:Rect)->int:
             return 2
         else:
             return 3
-    
+
+
+def move_player_car_by_y(Y:int,player_car:Car):
+    match Y:
+        case 0:
+            if player_car.car_rect.x <89:
+                return
+            player_car.car_rect.x -= 20
+        case 1:
+            pass
+        case 2:
+            if player_car.car_rect.x > 700:
+                return
+            player_car.car_rect.x +=20
+            

@@ -2,18 +2,27 @@ import torch
 
 Tensor = torch.Tensor
 
-def derv_relu(my_z1:Tensor)->Tensor:
-    return (my_z1 > 0).float()
+def derv_relu(my_z:Tensor)->Tensor:
+    return (my_z > 0).float()
 
-def del_c_del_b2(my_yhat:Tensor,my_y:Tensor)->Tensor:
-    return (2/len(my_yhat))*(torch.sum(my_yhat-my_y))
+def delC_delb3(yhat:Tensor,y:Tensor):
+    return yhat-y
 
-def del_c_del_w2(my_Dc_by_Db2:Tensor,my_z2)->Tensor:
+def delC_delw3(Db3:Tensor,A2:Tensor):
+    return Db3.mm(A2.T)
 
-    return my_Dc_by_Db2*(my_z2)
+def delC_delb2(Db3:Tensor,W3:Tensor,Z2:Tensor):
+    Da2 = W3.T.mm(Db3)
+    
+    return Da2*derv_relu(Z2)
 
-def del_c_del_b1(my_Dc_by_Db2:Tensor,my_w2:Tensor,my_derv_relu:Tensor)->Tensor:
-    return (my_Dc_by_Db2*(my_w2))*my_derv_relu
+def delC_delw2(Db2:Tensor,A1:Tensor):
+    return Db2.mm(A1.T)
 
-def del_c_del_w1(my_DC_by_Db1:Tensor,my_x:Tensor):
-    return my_DC_by_Db1.mm(my_x.T)
+def delC_delb1(Db2:Tensor,W2:Tensor,Z1:Tensor):
+    Da1 = W2.T.mm(Db2)
+    
+    return Da1*derv_relu(Z1)
+
+def delC_delw1(dB1:Tensor,X:Tensor):
+    return dB1.mm(X.T)

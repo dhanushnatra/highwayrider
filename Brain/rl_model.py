@@ -1,9 +1,19 @@
+from Brain.model_parts import forward_prop,backward_prop,update_params
+import torch
+from torch import Tensor
 
-from .model_parts import forward_prop,back_prop,update_params
+def init_params()->tuple[Tensor,Tensor,Tensor,Tensor,Tensor,Tensor]:
+    w1 = torch.randn(16,10)
+    b1 = torch.randn(16,1)
+    w2 = torch.randn(16,16)
+    b2 = torch.randn(16,1)
+    w3 = torch.randn(3,16)
+    b3 = torch.randn(3,1)
+    
+    return w1,b1,w2,b2,w3,b3
 
-
-def model_loop(my_w1,my_b1,my_w2,my_b2,my_y,my_x,learning_rate):
-    z1,z2,y_hat = forward_prop(my_w1,my_b1,my_w2,my_b2,my_x)
-    Dc_by_Dw2,Dc_by_Db2,Dc_by_Dw1,Dc_by_Db1=back_prop(y_hat,my_y,z2,z1,my_w2,my_x)
-    my_w2,my_b2,my_w1,my_b1 = update_params(Dc_by_Dw2,Dc_by_Db2,Dc_by_Dw1,Dc_by_Db1,my_w2,my_b2,my_w1,my_b1,learning_rate)
-    return my_w1,my_b1,my_w2,my_b2
+def model_loop(w1:Tensor,b1:Tensor,w2:Tensor,b2:Tensor,w3:Tensor,b3:Tensor,x:Tensor,y:Tensor,learning_rate:float):
+    yhat,a2,z2,a1,z1 = forward_prop(w1,b1,w2,b2,w3,b3,x)
+    dw1,db1,dw2,db2,dw3,db3 = backward_prop(yhat,y,a2,w3,z2,a1,w2,z1,x)
+    w1,b1,w2,b2,w3,b3 = update_params(w1,b1,w2,b2,w3,b3,dw1,db1,dw2,db2,dw3,db3,learning_rate)
+    return w1,b1,w2,b2,w3,b3,yhat

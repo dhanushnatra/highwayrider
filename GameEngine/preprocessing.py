@@ -5,14 +5,14 @@ def preprocess(traffic_cars:list[Car],player_car:Car)->torch.Tensor:
     traffic_arr = torch.zeros(5,2)
     i=0
     for traffic_car in traffic_cars:
-        traffic_arr[i][0] = traffic_car.car_rect.x
-        traffic_arr[i][1] = traffic_car.car_rect.y
+        traffic_arr[i][0] = traffic_car.car_rect.x / 768
+        traffic_arr[i][1] = traffic_car.car_rect.y / 1024
         i+=1
     
-    traffic_arr[-1][0] = player_car.car_rect.x
-    traffic_arr[-1][1] = player_car.car_rect.y
+    traffic_arr[-1][0] = player_car.car_rect.x /768
+    traffic_arr[-1][1] = player_car.car_rect.y / 1024
             
-    return traffic_arr.flatten()
+    return traffic_arr.view(10,1)
 
 
 def get_y(player_lane:int,empty_lane:int)->torch.Tensor:
@@ -23,5 +23,5 @@ def get_y(player_lane:int,empty_lane:int)->torch.Tensor:
         zeros[2] = 1
     else :
         zeros[1] = 1
-    return zeros.flatten()
+    return zeros.view(3,1)
         
