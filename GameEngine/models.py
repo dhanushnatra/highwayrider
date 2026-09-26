@@ -1,13 +1,14 @@
 from pygame import Rect
+from io import BytesIO
 
-lane1 = 90
-lane2 = 280 
-lane3 = 460
+lane1 = 100
+lane2 = 300 
+lane3 = 480
 
 class Car:
     car_rect:Rect
-    car_color:str
+    car_image:BytesIO
     
-    def __init__(self,car_rect,car_color):
+    def __init__(self,car_rect,car_image):
         self.car_rect = car_rect
-        self.car_color = car_color
+        self.car_image = car_image

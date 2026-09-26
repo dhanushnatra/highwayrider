@@ -5,9 +5,7 @@ from Brain.derivatives import delC_delb1,delC_delb2,delC_delb3,delC_delw1,delC_d
 
 warnings.filterwarnings("ignore")
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
-print("using",device)
 
 def relu(my_z:Tensor)->Tensor:
     return torch.max(my_z,torch.zeros_like(my_z))

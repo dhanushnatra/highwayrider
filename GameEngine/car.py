@@ -1,9 +1,34 @@
-from pygame import Rect
+from pygame import Rect,image,transform
 from random import randint
 from GameEngine.models import Car,lane1,lane2,lane3
+from pathlib import Path
+import os
 
-def create_car(lane,color,is_player=False)->Car:
-    return Car(Rect(lane,850 if is_player else 0,120,150),color)
+traffic_cars_path = Path("carArt/traffiic_cars")
+player_car_path = Path("carArt/player.bmp")
+
+car_size = (100,150)
+
+
+def create_traffic_car(lane)->Car:
+    traffic_car_img = image.load(traffic_cars_path / f"traffic_{randint(1,3)}.bmp" ).convert_alpha()
+    traffic_car_img = transform.scale(traffic_car_img,car_size)
+    
+    car_rect = traffic_car_img.get_rect()
+    car_rect.center = (lane,0)
+    
+    return Car(car_rect,traffic_car_img)
+
+def create_player_car()->Car:
+    player_img = image.load(str(player_car_path)).convert_alpha()
+    player_img = transform.scale(player_img,car_size)
+    
+    player_rect = player_img.get_rect()
+    player_rect.center = (lane2,850)
+    
+    return Car(player_rect,player_img)
+    
+
 
 all_lanes = set([1,2,3])
 
@@ -33,11 +58,11 @@ def spawn_traffic()->list[Car]:
     for lane in lanes:
         match lane:
             case 1:
-                traffic_car = create_car(lane1,"blue")
+                traffic_car = create_traffic_car(lane1)
             case 2:
-                traffic_car = create_car(lane2,"blue")
+                traffic_car = create_traffic_car(lane2)
             case 3:
-                traffic_car = create_car(lane3,"blue")
+                traffic_car = create_traffic_car(lane3)
         traffic_cars.append(traffic_car)
     return traffic_cars
 
@@ -62,7 +87,7 @@ def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
 
 def get_player_lane(player_rect:Rect)->int:
     player_x = player_rect.x
-    if player_x < 220:
+    if player_x < 120:
         return 1
     else:
         if player_x < 420:
