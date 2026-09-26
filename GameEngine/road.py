@@ -1,11 +1,12 @@
 from pygame.draw import line
+from GameEngine.models import lane1,lane2,lane3,start
 
 def draw_road(screen):
-    line(screen,"white",(220,1024),(220,0),2)
-    line(screen,"white",(420,1024),(420,0),2)
-    line(screen,"white",(600,1024),(600,0),2)
-    line(screen,"white",(40,1024),(40,0),2)
+    line(screen,"white",(lane1,1024),(lane1,0),2)
+    line(screen,"white",(lane2,1024),(lane2,0),2)
+    line(screen,"white",(lane3,1024),(lane3,0),2)
+    line(screen,"white",(start,1024),(start,0),2)
     
 def draw_threshold(screen):
-    line(screen,"grey",(0,400),(768,400),2)
-    line(screen,"grey",(0,500),(768,500),2)
+    line(screen,"grey",(0,400),(600,400),2)
+    line(screen,"grey",(0,500),(600,500),2)

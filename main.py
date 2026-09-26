@@ -1,7 +1,7 @@
 
 import pygame
 from GameEngine.road import draw_road,draw_threshold
-from GameEngine.car import spawn_traffic,move_traffic_cars,create_player_car,is_colliding,move_player_car_by_y,get_player_lane,get_empty_lane
+from GameEngine.car import spawn_traffic,move_traffic_cars,create_player_car,is_colliding,move_player_car_by_y,get_player_lane,get_empty_lane,car_lane2
 from GameEngine.preprocessing import preprocess,get_y
 from model_setup import convert_to_int,save_model,load_model
 from Brain.rl_model import model_loop
@@ -12,7 +12,7 @@ pygame.init()
 
 w1,b1,w2,b2,w3,b3 = load_model()
 
-screen = pygame.display.set_mode((640,1024))
+screen = pygame.display.set_mode((400,1024))
 pygame.display.set_caption("highway rider")
 
 clock = pygame.time.Clock()
@@ -21,11 +21,13 @@ running = True
 
 tick_count = 0
 player_car = create_player_car()
+player_lane = 2 
 
 traffic_cars = spawn_traffic()
 learning_rate:float = 0.001
 
 mistakes = 0
+
 
 # speed = 20
 
@@ -50,30 +52,33 @@ try:
             if event.type == pygame.QUIT:
                 running = False
         
-        player_lane = get_player_lane(player_car.car_rect)
+        player_lane = get_player_lane(player_car.car_rect,player_lane)
         empty_lane = get_empty_lane(traffic_cars)
         # print("player lane=",player_lane)
         # print("empty lane=",empty_lane)
         
         actual_y = get_y(player_lane,empty_lane)
         
+        
         if tick_count!=0:
             
             if tick_count==60:
                 tick_count=0
                 traffic_cars += spawn_traffic()
-                print("Cost =",cross_entropy(y_hat,actual_y))
+        
         
         x = preprocess(traffic_cars,player_car)
         
         
         w1,b1,w2,b2,w3,b3,y_hat = model_loop(w1,b1,w2,b2,w3,b3,x,actual_y,learning_rate)
+        print("Cost =",cross_entropy(y_hat,actual_y))
+        
         
         move_player_car_by_y(convert_to_int(y_hat),player_car)
 
         screen.fill("#313131")
         draw_road(screen)
-        draw_threshold(screen)
+        # draw_threshold(screen)
         
         move_traffic_cars(traffic_cars)
 
@@ -93,8 +98,7 @@ try:
             traffic_cars = []
             tick_count=0
             traffic_cars = spawn_traffic()
-            player_car.car_rect.x = 300
-            player_car.car_rect.y = 800
+            player_car.car_rect.center = (car_lane2,850)
             mistakes+=1
             
         

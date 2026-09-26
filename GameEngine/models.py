@@ -1,9 +1,14 @@
 from pygame import Rect
 from io import BytesIO
 
-lane1 = 100
-lane2 = 300 
-lane3 = 480
+start = 5
+lane1 = 130 + start
+lane2 = 240 + start
+lane3 = 390 + start
+
+car_lane1 = (start+lane1) / 2
+car_lane2 = (lane1+lane2) / 2
+car_lane3 = (lane2+lane3) / 2
 
 class Car:
     car_rect:Rect
