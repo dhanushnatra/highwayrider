@@ -38,11 +38,21 @@ def get_empty_lane(traffic_cars:list[Car])->int:
     
     for traffic_car in traffic_cars:
         if traffic_car.car_rect.y > 300:
-            full_lanes.add(get_player_lane(traffic_car.car_rect))
+            full_lanes.add(get_traffic_car_lane(traffic_car.car_rect))
             
     empty_lanes = all_lanes.difference(full_lanes)
+    # print(empty_lanes)
     
     return list(empty_lanes)[0] if len(empty_lanes)==1 else 2
+
+def get_traffic_car_lane(traffic_car_rect:Rect):
+    if traffic_car_rect.centerx == car_lane1:
+        return 1
+    elif traffic_car_rect.centerx == car_lane2:
+        return 2
+    else:
+        return 3
+
 
 def spawn_traffic()->list[Car]:
     traffic_cars = []
@@ -74,8 +84,6 @@ def move_traffic_cars(traffic_cars:list[Car]):
             
         traffic_car.car_rect.y+=10
         
-
-
 def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
     for traffic_car in traffic_cars:
         if player_car.car_rect.colliderect(traffic_car.car_rect):
@@ -84,19 +92,17 @@ def is_colliding(player_car:Car,traffic_cars:list[Car])->bool:
 
 
 def get_player_lane(player_rect:Rect,last_player_lane:int=2)->int:
-    player_c_plus = player_rect.centerx+car_size[0]/2
-    player_c_minus = player_rect.centerx-car_size[0]/2
+    player_c_plus = player_rect.centerx+35
+    player_c_minus = player_rect.centerx-35
     
-    if player_c_plus < lane1 and player_c_minus > start:
+    if player_c_plus < lane1:
         return 1
     elif player_c_plus < lane2 and player_c_minus > lane1:
         return 2
-    elif player_c_plus < lane3 and player_c_minus > lane2:
+    elif player_c_minus > lane2:
         return 3
-    
     else:
-        return last_player_lane    
-     
+        return last_player_lane  
 speed = 30
 
 def move_player_car_by_y(Y:int,player_car:Car):

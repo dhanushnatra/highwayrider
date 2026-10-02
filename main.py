@@ -1,6 +1,6 @@
 
 import pygame
-from GameEngine.road import draw_road,draw_threshold
+from GameEngine.road import draw_road
 from GameEngine.car import spawn_traffic,move_traffic_cars,create_player_car,is_colliding,move_player_car_by_y,get_player_lane,get_empty_lane,car_lane2
 from GameEngine.preprocessing import preprocess,get_y
 from model_setup import convert_to_int,save_model,load_model
@@ -12,7 +12,10 @@ pygame.init()
 
 w1,b1,w2,b2,w3,b3 = load_model()
 
-screen = pygame.display.set_mode((400,1024))
+screen_width,screen_height = 400,1024
+
+
+screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("highway rider")
 
 clock = pygame.time.Clock()
@@ -67,7 +70,7 @@ try:
                 traffic_cars += spawn_traffic()
         
         
-        x = preprocess(traffic_cars,player_car)
+        x = preprocess(traffic_cars,player_car,screen_width,screen_height)
         
         
         w1,b1,w2,b2,w3,b3,y_hat = model_loop(w1,b1,w2,b2,w3,b3,x,actual_y,learning_rate)
